@@ -14,18 +14,32 @@ public class ContolScript : MonoBehaviour {
 			ShowParameter("::Tap::");
 			MBTOnTap ();
 		};
-		MBTHelper.OnSwipe += (x, y) => {
-			Debug.Log ("::Swipe " + x.ToString() + ", " + y.ToString() + "::");
-			ShowParameter("::Swipe " + x.ToString() + ", " + y.ToString() + "::");
-			MBTOnSwipe (x, y);
+
+		MBTHelper.OnDoubleTap += () => {
+			Debug.Log ("::DoubleTap::");
+			ShowParameter("::DoubleTap::");
+			MBTOnDoubleTap ();
 		};
+
 		MBTHelper.OnScroll += (x, y) => {
 			Debug.Log ("::Scroll " + x.ToString() + ", " + y.ToString() + "::");
 			ShowParameter("::Scroll " + x.ToString() + ", " + y.ToString() + "::");
 			MBTOnScroll (x, y);
 		};
 
-		DebugText.text = "";
+		MBTHelper.OnSwipe += (gesture) => {
+			Debug.Log ("::Swipe " + gesture.ToString() + "::");
+			ShowParameter("::Swipe " + gesture.ToString() + "::");
+			MBTOnSwipe (gesture);
+		};
+
+		MBTHelper.OnCharge += () => {
+			Debug.Log ("::Charge::");
+			ShowParameter("::Charge::");
+			MBTOnCharge ();
+		};
+
+		// DebugText.text = "";
 	}
 
 	// Update is called once per frame
@@ -37,11 +51,19 @@ public class ContolScript : MonoBehaviour {
 
 	}
 
-	private void MBTOnSwipe (float xx, float yy) {
+	private void MBTOnDoubleTap () {
 
 	}
 
 	private void MBTOnScroll (float xx, float yy) {
+
+	}
+
+	private void MBTOnSwipe (string gesture) {
+
+	}
+
+	private void MBTOnCharge () {
 
 	}
 

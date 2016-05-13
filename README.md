@@ -1,15 +1,15 @@
-# Milbox Touch SDK for Unity
+# MilboxTouch SDK for Unity
 
-This SDK for the developer to use Milbox touch module.
-Milbox touch is the most flexible and easy touch control device for VR cardboard device.
+This SDK for the developer to use MilboxTouch module.
+MilboxTouch is the most flexible and easy touch control device for VR cardboard device.
 
 <http://milbox.tokyo/>
 
-The open-source library allows you to integrate Milbox touch into your Unity app.
+The open-source library allows you to integrate MilboxTouch into your Unity app.
 
 ## Getting started
 
-- Download milbox touch sdk to your computer.
+- Download MilboxTouch sdk to your computer.
 - import MBTHelper.unitypackage to your project.
 - Add MBTHelper.cs to your main game object.
 - handling MBTHelper event in your script.
@@ -17,8 +17,10 @@ The open-source library allows you to integrate Milbox touch into your Unity app
 ## FEATURES
 
 - Tap - detect tap action.
+- DoubleTap - detect double tap action.
 - Swipe - detect swipe action.
 - Scroll - detect scroll action.
+- Charge - detect charge action.
 
 ## GIVE FEEDBACK
 
@@ -26,7 +28,7 @@ Please report bugs and issue to this repository.
 
 ## CONTRIBUTING
 
-We are able to accept contributions to the Millbox Touch SDK for Unity. To contribute please do the following.
+We are able to accept contributions to the MilboxTouch SDK for Unity. To contribute please do the following.
 
 - Follow the instructions in the CONTRIBUTING.md.
 
