@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class ContolScript : MonoBehaviour {
+public class ControlScript : MonoBehaviour {
 
 	public Text DebugText;
 	public bool DebugMode = false;
@@ -44,7 +44,6 @@ public class ContolScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
 	}
 
 	private void MBTOnTap () {
