@@ -12,7 +12,6 @@ public class MBTHelper : MonoBehaviour {
 
 	//タップの許容移動距離
 	public const float tapDetectLength = 15.0f;
-	private const float tapDetectLengthSqrt = tapDetectLength*tapDetectLength;
 
 	//ダブルタップの許容時間
 	public float doubleTapDetectTime = 0.3f;
@@ -20,17 +19,15 @@ public class MBTHelper : MonoBehaviour {
 	//チャージに必要なフレーム数
 	public int chargeDetectTapCount = 30;
 
-	private Vector2 tapBeganPos = Vector2.zero;
+	public float minSwipeDistX;
+	public float minSwipeDistY;
 
-	//タッチ継続時間
+	private Vector2 tapBeganPos = Vector2.zero;
 	private float touchTime = 0.0f;
 	private float lastTapTime = 0.0f;
 	private int tapCountPerTime = 0;
 	private int lastTime = 0;
 	private bool charged = false;
-
-	public float minSwipeDistX;
-	public float minSwipeDistY;
 
 	void Start () {
 		if (minSwipeDistX == 0) {
@@ -87,7 +84,7 @@ public class MBTHelper : MonoBehaviour {
 			touchTime += Time.deltaTime;
 
 			Vector3 vp = Input.GetTouch (0).deltaPosition;
-			if (vp.sqrMagnitude > tapDetectLengthSqrt) {
+			if (vp.sqrMagnitude > tapDetectLength*tapDetectLength) {
 				if (vp.x*vp.x > vp.y*vp.y){
 					OnScroll(Input.GetTouch(0).position.x, 0);
 				} else {
@@ -103,7 +100,7 @@ public class MBTHelper : MonoBehaviour {
 
 			//check tap and double tap.
 			if (touchTime < tapDetectTime) {
-				if ((endPos - tapBeganPos).sqrMagnitude < tapDetectLengthSqrt) {
+				if ((endPos - tapBeganPos).sqrMagnitude < tapDetectLength*tapDetectLength) {
 					if ((Time.time - lastTapTime) < doubleTapDetectTime) {
 						OnDoubleTap ();
 						lastTapTime = 0f;
