@@ -75,20 +75,22 @@ public class MBTHelper : MonoBehaviour {
 			}
 		}
 
-		switch (Input.GetTouch(0).phase) {
+		Touch nowTouch = Input.GetTouch(0);
+
+		switch (nowTouch.phase) {
 		case TouchPhase.Began:
-			tapBeganPos = Input.GetTouch (0).position;
+			tapBeganPos = nowTouch.position;
 			break;
 		case TouchPhase.Moved:
 		case TouchPhase.Stationary:
 			touchTime += Time.deltaTime;
 
-			Vector3 vp = Input.GetTouch (0).deltaPosition;
+			Vector3 vp = nowTouch.deltaPosition;
 			if (vp.sqrMagnitude > tapDetectLength*tapDetectLength) {
 				if (vp.x*vp.x > vp.y*vp.y){
-					OnScroll(Input.GetTouch(0).position.x, 0);
+					OnScroll(nowTouch.position.x, 0);
 				} else {
-					OnScroll(0, Input.GetTouch(0).position.y);
+					OnScroll(0, nowTouch.position.y);
 				}
 			}
 			break;
@@ -96,7 +98,7 @@ public class MBTHelper : MonoBehaviour {
 		case TouchPhase.Ended:
 		case TouchPhase.Canceled:
 
-			var endPos = Input.GetTouch (0).position;
+			var endPos = nowTouch.position;
 
 			//check tap and double tap.
 			if (touchTime < tapDetectTime) {
