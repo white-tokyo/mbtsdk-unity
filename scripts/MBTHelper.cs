@@ -6,6 +6,7 @@ public class MBTHelper : MonoBehaviour {
 	public delegate void Trigger();
 	public delegate void TouchPad(float x, float y);
 	public delegate void Gesture(string name);
+	public delegate void Clockwise(bool flg);
 
 	//タップの許容時間
 	public const float tapDetectTime = 1.0f;
@@ -29,6 +30,14 @@ public class MBTHelper : MonoBehaviour {
 	private int lastTime = 0;
 	private bool charged = false;
 
+
+	private	const float	CLOCK_PARAM_MAX			= 20.0f;
+	private	const float	CLOCK_PARAM_THRESHOLD 	= 5.0f;
+	private	const float	CLOCK_PARAM_ADD 		= 1.0f;
+	private	const float	CLOCK_PARAM_GAIN		= 0.9f;
+	private	float		clockParam				= 0f;
+
+
 	void Start () {
 		if (minSwipeDistX == 0) {
 			minSwipeDistX = 50;
@@ -45,6 +54,7 @@ public class MBTHelper : MonoBehaviour {
 	public static event Trigger OnCharge, OnTap, OnDoubleTap;
 	public static event TouchPad OnScroll;
 	public static event Gesture OnSwipe;
+	public static event Clockwise OnClockwise;
 
 	public void Awake(){
 		OnTap = delegate { };
@@ -52,6 +62,7 @@ public class MBTHelper : MonoBehaviour {
 		OnDoubleTap = delegate { };
 		OnSwipe = delegate { };
 		OnScroll = delegate { };
+		OnClockwise = delegate { };
 	}
 
 	void Update () {
@@ -93,6 +104,29 @@ public class MBTHelper : MonoBehaviour {
 					OnScroll(0, nowTouch.position.y);
 				}
 			}
+
+			Vector2 td = nowTouch.deltaPosition;
+
+			clockParam *= CLOCK_PARAM_GAIN;
+
+			if (0<td.x)
+			{
+				if( -CLOCK_PARAM_MAX < clockParam ){ clockParam -= CLOCK_PARAM_ADD; }
+			}
+			else if (td.x<0)
+			{
+				if( clockParam < CLOCK_PARAM_MAX ){ clockParam += CLOCK_PARAM_ADD; }
+			}
+			
+			if( CLOCK_PARAM_THRESHOLD < clockParam )
+			{
+				OnClockwise(true);
+			}
+			else if( clockParam < -CLOCK_PARAM_THRESHOLD )
+			{
+				OnClockwise(false);
+			}
+
 			break;
 
 		case TouchPhase.Ended:
