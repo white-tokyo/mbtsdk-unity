@@ -35,12 +35,6 @@ public class MBTHelper : MonoBehaviour {
 	private	const float	CLOCK_AVR_THRESHOLD 	= 1.0f;		//TODO 端末によって解像度が違うので何かしらの方法で最大近辺最小近辺を取得して適宜な値に動的に調整が好ましい
 	public	float		clockAvr;
 
-//	private	const float	CLOCK_PARAM_MAX			= 20.0f;
-//	private	const float	CLOCK_PARAM_THRESHOLD 	= 5.0f;
-//	private	const float	CLOCK_PARAM_ADD 		= 1.0f;
-//	private	const float	CLOCK_PARAM_GAIN		= 0.9f;
-//	public	float		clockParam				= 0f;
-
 
 	void Start () {
 		if (minSwipeDistX == 0) {
