@@ -39,9 +39,9 @@ public class ControlScript : MonoBehaviour {
 			MBTOnCharge ();
 		};
 
-		MBTHelper.OnClockwise += (flg) => {
-			Debug.Log ("::Clock " + flg.ToString() + "::");
-			ShowParameter("::Clock " + flg.ToString() + "::");
+		MBTHelper.OnClockwise += (flg, avr) => {
+			Debug.Log ("::Clock " + flg.ToString() + "," + avr.ToString() + "::");
+			ShowParameter("::Clock " + flg.ToString() + "," + avr.ToString() + "::");
 			MBTOnClock (flg);
 		};
 

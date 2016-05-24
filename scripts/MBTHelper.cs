@@ -6,7 +6,7 @@ public class MBTHelper : MonoBehaviour {
 	public delegate void Trigger();
 	public delegate void TouchPad(float x, float y);
 	public delegate void Gesture(string name);
-	public delegate void Clockwise(bool flg);
+	public delegate void Clockwise(bool flg, float avr);
 
 	//タップの許容時間
 	public const float tapDetectTime = 1.0f;
@@ -30,12 +30,16 @@ public class MBTHelper : MonoBehaviour {
 	private int lastTime = 0;
 	private bool charged = false;
 
+	//回転は数フレーム分のアベレージを取る
+	private	const int	CLOCK_AVR_NUM			= 5;
+	private	const float	CLOCK_AVR_THRESHOLD 	= 1.0f;		//TODO 端末によって解像度が違うので何かしらの方法で最大近辺最小近辺を取得して適宜な値に動的に調整が好ましい
+	public	float		clockAvr;
 
-	private	const float	CLOCK_PARAM_MAX			= 20.0f;
-	private	const float	CLOCK_PARAM_THRESHOLD 	= 5.0f;
-	private	const float	CLOCK_PARAM_ADD 		= 1.0f;
-	private	const float	CLOCK_PARAM_GAIN		= 0.9f;
-	private	float		clockParam				= 0f;
+//	private	const float	CLOCK_PARAM_MAX			= 20.0f;
+//	private	const float	CLOCK_PARAM_THRESHOLD 	= 5.0f;
+//	private	const float	CLOCK_PARAM_ADD 		= 1.0f;
+//	private	const float	CLOCK_PARAM_GAIN		= 0.9f;
+//	public	float		clockParam				= 0f;
 
 
 	void Start () {
@@ -68,6 +72,7 @@ public class MBTHelper : MonoBehaviour {
 	void Update () {
 
 		MBTTouch.Update();
+		CarcAvarage();
 
 		if (MBTTouch.touchCount == 0) {
 			return;
@@ -105,26 +110,13 @@ public class MBTHelper : MonoBehaviour {
 				}
 			}
 
-			Vector2 td = nowTouch.deltaPosition;
-
-			clockParam *= CLOCK_PARAM_GAIN;
-
-			if (0<td.x)
+			if( CLOCK_AVR_THRESHOLD < clockAvr )
 			{
-				if( -CLOCK_PARAM_MAX < clockParam ){ clockParam -= CLOCK_PARAM_ADD; }
+				OnClockwise(false, clockAvr);		//TODO ここで機種依存の値、clockAvrを渡しているが機種依存しない形に修正したい
 			}
-			else if (td.x<0)
+			else if( clockAvr < -CLOCK_AVR_THRESHOLD )
 			{
-				if( clockParam < CLOCK_PARAM_MAX ){ clockParam += CLOCK_PARAM_ADD; }
-			}
-			
-			if( CLOCK_PARAM_THRESHOLD < clockParam )
-			{
-				OnClockwise(true);
-			}
-			else if( clockParam < -CLOCK_PARAM_THRESHOLD )
-			{
-				OnClockwise(false);
+				OnClockwise(true, clockAvr);		//TODO 上記に同じ
 			}
 
 			break;
@@ -169,4 +161,19 @@ public class MBTHelper : MonoBehaviour {
 		}
 
 	}
+
+	private void CarcAvarage()
+	{
+		float dx = 0f;
+		if( 0 < MBTTouch.touchCount )
+		{
+			dx = MBTTouch.deltaPosition.x;
+		}
+		
+		clockAvr = (clockAvr*(CLOCK_AVR_NUM-1) + dx) / CLOCK_AVR_NUM;
+		
+	}
+
+
+
 }
