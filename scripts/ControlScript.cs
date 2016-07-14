@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public class ControlScript : MonoBehaviour {
 
@@ -9,75 +10,43 @@ public class ControlScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		MBTHelper.OnTap += () => {
-			Debug.Log ("::Tap::");
-			ShowParameter("::Tap::");
-			MBTOnTap ();
+		MBTHelper.OnTap += (angle) => {
+			ShowParameter(string.Format("::Tap angle:{0}::",angle));
 		};
 
-		MBTHelper.OnDoubleTap += () => {
-			Debug.Log ("::DoubleTap::");
-			ShowParameter("::DoubleTap::");
-			MBTOnDoubleTap ();
+		MBTHelper.OnDoubleTap += (angle) => {
+			ShowParameter(string.Format("::DoubleTap {0}::",angle));
 		};
 
-		MBTHelper.OnScroll += (x, y) => {
-			Debug.Log ("::Scroll " + x.ToString() + ", " + y.ToString() + "::");
-			ShowParameter("::Scroll " + x.ToString() + ", " + y.ToString() + "::");
-			MBTOnScroll (x, y);
+		MBTHelper.OnScroll += (angle) => {
+			string s = String.Format("::Scroll {0} ::",angle);
+			ShowParameter(s);
 		};
 
-		MBTHelper.OnSwipe += (gesture) => {
-			Debug.Log ("::Swipe " + gesture.ToString() + "::");
-			ShowParameter("::Swipe " + gesture.ToString() + "::");
-			MBTOnSwipe (gesture);
+		MBTHelper.OnSwipe += (speed,direction) => {
+			var s = String.Format("::Swipespd:{0},dir:{1} ::",speed,direction);
+			ShowParameter(s);
+		};
+		MBTHelper.OnScrollBegan += () => {
+			ShowParameter("scrollBegan!!!");
 		};
 
-		MBTHelper.OnCharge += () => {
-			Debug.Log ("::Charge::");
-			ShowParameter("::Charge::");
-			MBTOnCharge ();
+		MBTHelper.OnScrollEnd += () => {
+			ShowParameter("ScrollEnd!!!!");
 		};
 
-		MBTHelper.OnClockwise += (flg, avr) => {
-			Debug.Log ("::Clock " + flg.ToString() + "," + avr.ToString() + "::");
-			ShowParameter("::Clock " + flg.ToString() + "," + avr.ToString() + "::");
-			MBTOnClock (flg);
+		MBTHelper.OnSetupProgress += () => {
+			ShowParameter("setupProgress:"+Time.time);
+		};
+		MBTHelper.OnSetupCompleted += () => {
+			ShowParameter("setupComplete!!!");
 		};
 
 		// DebugText.text = "";
 	}
-
-	// Update is called once per frame
-	void Update () {
-	}
-
-	private void MBTOnTap () {
-
-	}
-
-	private void MBTOnDoubleTap () {
-
-	}
-
-	private void MBTOnScroll (float xx, float yy) {
-
-	}
-
-	private void MBTOnSwipe (string gesture) {
-
-	}
-
-	private void MBTOnCharge () {
-
-	}
-
-	private void MBTOnClock (bool flg) {
-
-	}
-
-
+		
 	private void ShowParameter (string st) {
+		Debug.Log (st);
 		if (DebugMode) {
 			DebugText.text = st;
 		}
