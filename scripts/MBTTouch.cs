@@ -80,18 +80,18 @@ public class MBTTouch
 #else
 
 		touchCount = Input.touchCount;
-		
+
 		if( 0<touchCount )
 		{
-			Touch nowTouch	= Input.GetTouch(0);
+		Touch nowTouch	= Input.GetTouch(0);
 
-			phase			= nowTouch.phase;
-			position		= nowTouch.position;
-			deltaPosition	= nowTouch.deltaPosition;
+		phase			= nowTouch.phase;
+		position		= nowTouch.position;
+		deltaPosition	= nowTouch.deltaPosition;
 		}
 		else
 		{
-			phase			= TouchPhase.Ended;
+		phase			= TouchPhase.Ended;
 		}
 #endif
 	}
