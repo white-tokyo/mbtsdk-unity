@@ -9,29 +9,26 @@ namespace MilboxTouch
 {
 
     /// <summary>
-    /// MBT helper.
-    /// 
+    /// MbtController
     /// </summary>
-    public class MBTHelper : MonoBehaviour
+    public class MbtController : MonoBehaviour
     {
 
         public delegate void OnScrollEventHandler(float degreeDelta);
-
         public delegate void OnSwipeEventHandler(Swipe swipe);
-
         public delegate void OnActionEventHandler();
 
         //action event
-        public static event OnActionEventHandler OnTap;
-        public static event OnActionEventHandler OnDoubleTap;
-        public static event OnScrollEventHandler OnScroll;
-        public static event OnActionEventHandler OnScrollBegan;
-        public static event OnActionEventHandler OnScrollEnd;
-        public static event OnSwipeEventHandler OnSwipe;
+        public event OnActionEventHandler OnTap;
+        public event OnActionEventHandler OnDoubleTap;
+        public event OnScrollEventHandler OnScroll;
+        public event OnActionEventHandler OnScrollBegan;
+        public event OnActionEventHandler OnScrollEnd;
+        public event OnSwipeEventHandler OnSwipe;
 
         //setup event
-        public static event OnActionEventHandler OnSetupProgress;
-        public static event OnActionEventHandler OnSetupCompleted;
+        public event OnActionEventHandler OnSetupProgress;
+        public event OnActionEventHandler OnSetupCompleted;
 
         //detect tap duration of time  
         public float tapDetectDuration = 250;
@@ -48,64 +45,29 @@ namespace MilboxTouch
         //tolerance for progress setup stage. 
         public float setupTorrelance = 5;
 
-        //private MBTState state = null;
-        //private float leftLimit = -1;
-        //private float rightLimit = -1;
+        private Subject<float> _touchBeganSubject = new Subject<float>();
+        private Subject<float> _touchMovedSubject = new Subject<float>();
+        private Subject<float> _touchEndedSubject = new Subject<float>();
 
-        private readonly Subject<float> touchBeganSubject = new Subject<float>();
-        private readonly Subject<float> touchMovedSubject = new Subject<float>();
-        private readonly Subject<float> touchEndedSubject = new Subject<float>();
+        private readonly Subject<string> _onSetupProgressSubject = new Subject<string>(); 
+        private readonly Subject<string> _onSetupCompleteSubject = new Subject<string>();
+        private readonly Subject<string> _onTapSubject = new Subject<string>();
+        private readonly Subject<string> _onDoubleTapSubject = new Subject<string>();
+        private readonly Subject<string> _onScrollBeganSubject = new Subject<string>(); 
+        private readonly Subject<float> _onScrollSubject = new Subject<float>(); 
+        private readonly Subject<string> _onScrollEndSubject = new Subject<string>();
+        private readonly Subject<Swipe> _onSwipeSubject = new Subject<Swipe>();
 
-        private readonly Subject<string> onSetupProgressSubject = new Subject<string>(); 
-        private readonly Subject<string> onSetupCompleteSubject = new Subject<string>();
-        private readonly Subject<string> onTapSubject = new Subject<string>();
-        private readonly Subject<string> onDoubleTapSubject = new Subject<string>();
-        private readonly Subject<string> onScrollBeganSubject = new Subject<string>(); 
-        private readonly Subject<float> onScrollSubject = new Subject<float>(); 
-        private readonly Subject<string> onScrollEndSubject = new Subject<string>();
-        private readonly Subject<Swipe> onSwipeSubject = new Subject<Swipe>();
-
-        private void Start()
+        /// <summary>
+        /// Start setup
+        /// </summary>
+        public void StartSetup()
         {
-            //state = new MBTSetupState(this);
-            onSetupCompleteSubject.Subscribe(it =>
-            {
-                OnSetupCompleted();
-            }).AddTo(gameObject);
-            onSetupProgressSubject.Subscribe(it =>
-            {
-                OnSetupProgress();
-            }).AddTo(gameObject);
-            onTapSubject.Subscribe(it =>
-            {
-                OnTap();
-            }).AddTo(gameObject);
-            onDoubleTapSubject.Subscribe(it =>
-            {
-                OnDoubleTap();
-            }).AddTo(gameObject);
-            onScrollBeganSubject.Subscribe(it =>
-            {
-                OnScrollBegan();
-            }).AddTo(gameObject);
-            onScrollSubject.Subscribe(it =>
-            {
-                OnScroll(it);
-            }).AddTo(gameObject);
-            onScrollEndSubject.Subscribe(it =>
-            {
-                OnScrollEnd();
-            }).AddTo(gameObject);
-            onSwipeSubject.Subscribe(it =>
-            {
-                OnSwipe(it);
-            }).AddTo(gameObject);
-
-            var angleFactory = new Angle.Factory(410,555);
+            var angleFactory = new Angle.Factory(410, 555);
             var upOrDown =
-                Observable.Merge(touchBeganSubject, touchEndedSubject).Throttle(TimeSpan.FromMilliseconds(250));
+                Observable.Merge(_touchBeganSubject, _touchEndedSubject).Throttle(TimeSpan.FromMilliseconds(250));
 
-            var moveOverBounds = touchMovedSubject.Pre().Where((tuple) =>
+            var moveOverBounds = _touchMovedSubject.Pre().Where((tuple) =>
             {
                 return Mathf.Abs(tuple.Item2 - tuple.Item1) > 100;
             }).SelectMany((tuple) =>
@@ -119,7 +81,7 @@ namespace MilboxTouch
 
             var leftFin = left.List()
                 .Select(it => it.TakeLast(10))
-                .Do(it => onSetupProgressSubject.OnNext(null))
+                .Do(it => _onSetupProgressSubject.OnNext(null))
                 .Where(it => it.Count() == 10)
                 .Where(
                     list =>
@@ -132,7 +94,7 @@ namespace MilboxTouch
                     });
             var rightFin = right.List()
                 .Select(it => it.TakeLast(10))
-                .Do(it => onSetupProgressSubject.OnNext(null))
+                .Do(it => _onSetupProgressSubject.OnNext(null))
                 .Where(it => it.Count() == 10)
                 .Where(
                     list =>
@@ -152,15 +114,15 @@ namespace MilboxTouch
                         angleFactory.LeftBounds = it[0].Value.Average();
                         angleFactory.RightBounds = it[1].Value.Average();
                         Debug.Log(string.Format("FINISH: left: {0} right: {1}", angleFactory.LeftBounds, angleFactory.RightBounds));
-                        onSetupCompleteSubject.OnNext(null);
+                        _onSetupCompleteSubject.OnNext(null);
                     });
 
 
             var detectAngles =
-                Observable.Merge(touchBeganSubject.Select(it => Tuple.Create("began", it)),
-                    touchMovedSubject.Select(it => Tuple.Create("moved", it)),
-                    touchEndedSubject.Select(it => Tuple.Create("ended", it)))
-                    .SkipUntil(onSetupCompleteSubject)
+                Observable.Merge(_touchBeganSubject.Select(it => Tuple.Create("began", it)),
+                    _touchMovedSubject.Select(it => Tuple.Create("moved", it)),
+                    _touchEndedSubject.Select(it => Tuple.Create("ended", it)))
+                    .SkipUntil(_onSetupCompleteSubject)
                     .Select(it => Tuple.Create(it.Item1, angleFactory.ToAngle(it.Item2))).Publish();
             var sequence =
                 detectAngles.TakeUntil(
@@ -199,7 +161,7 @@ namespace MilboxTouch
             //});
 
             var tap =
-                Observable.Zip(seqBegan.Timestamp(), seqEnded.Timestamp()).Select(it=>Tuple.Create(it[0],it[1]))
+                Observable.Zip(seqBegan.Timestamp(), seqEnded.Timestamp()).Select(it => Tuple.Create(it[0], it[1]))
                     //.Do(it =>
                     //{
                     //    var a = (it.Item2.Timestamp - it.Item1.Timestamp).TotalMilliseconds;
@@ -224,12 +186,12 @@ namespace MilboxTouch
                         if (it == "tap")
                         {
                             //Debug.Log("TAP!!!!!");
-                            onTapSubject.OnNext(null);
+                            _onTapSubject.OnNext(null);
                         }
                         else
                         {
                             //Debug.Log("DOUBLE_TAP!!!!!");
-                            onDoubleTapSubject.OnNext(null);
+                            _onDoubleTapSubject.OnNext(null);
                         }
                     });
             tap.Connect().AddTo(gameObject);
@@ -245,18 +207,18 @@ namespace MilboxTouch
                     }).TakeUntil(seqEnded);
             scrollStroke.Take(1).Do(it =>
             {
-                onScrollBeganSubject.OnNext(null);
-            }).Zip(scrollStroke.ToList(), (a,b)=>Tuple.Create(a,b)).Repeat().Subscribe(tuple =>
+                _onScrollBeganSubject.OnNext(null);
+            }).Zip(scrollStroke.ToList(), (a, b) => Tuple.Create(a, b)).Repeat().Subscribe(tuple =>
             {
                 if (tuple.Item2.Count != 0)
                 {
-                    onScrollEndSubject.OnNext(null);
+                    _onScrollEndSubject.OnNext(null);
                 }
             }).AddTo(gameObject);
             scrollStroke.Repeat().Subscribe(it =>
             {
                 //Debug.Log("SCR:"+it);
-                onScrollSubject.OnNext(it);
+                _onScrollSubject.OnNext(it);
             }).AddTo(gameObject);
 
             //swipe
@@ -274,7 +236,7 @@ namespace MilboxTouch
                 if (positionCondition && timeCondition)
                 {
                     var swipe = new Swipe(startAngle, endAngle, (float)timeDelta);
-                    onSwipeSubject.OnNext(swipe);
+                    _onSwipeSubject.OnNext(swipe);
                 }
             }).AddTo(gameObject);
 
@@ -282,8 +244,54 @@ namespace MilboxTouch
 
         }
 
+        public void Reset()
+        {
+            _touchBeganSubject.Dispose();
+            _touchBeganSubject = new Subject<float>();
+            _touchMovedSubject.Dispose();
+            _touchMovedSubject = new Subject<float>();
+            _touchEndedSubject.Dispose();
+            _touchEndedSubject = new Subject<float>();
+        }
 
-        public void Awake()
+        private void Start()
+        {
+            _onSetupCompleteSubject.Subscribe(it =>
+            {
+                OnSetupCompleted();
+            }).AddTo(gameObject);
+            _onSetupProgressSubject.Subscribe(it =>
+            {
+                OnSetupProgress();
+            }).AddTo(gameObject);
+            _onTapSubject.Subscribe(it =>
+            {
+                OnTap();
+            }).AddTo(gameObject);
+            _onDoubleTapSubject.Subscribe(it =>
+            {
+                OnDoubleTap();
+            }).AddTo(gameObject);
+            _onScrollBeganSubject.Subscribe(it =>
+            {
+                OnScrollBegan();
+            }).AddTo(gameObject);
+            _onScrollSubject.Subscribe(it =>
+            {
+                OnScroll(it);
+            }).AddTo(gameObject);
+            _onScrollEndSubject.Subscribe(it =>
+            {
+                OnScrollEnd();
+            }).AddTo(gameObject);
+            _onSwipeSubject.Subscribe(it =>
+            {
+                OnSwipe(it);
+            }).AddTo(gameObject);
+        }
+
+
+        private void Awake()
         {
             OnTap = delegate { };
             OnDoubleTap = delegate { };
@@ -308,21 +316,15 @@ namespace MilboxTouch
             switch (MBTTouch.phase)
             {
                 case TouchPhase.Began:
-                    //Debug.Log("began:" + MBTTouch.position.x);
-                    touchBeganSubject.OnNext(MBTTouch.position.x);
-                    //state.touchBegan(MBTTouch.position.x);
+                    _touchBeganSubject.OnNext(MBTTouch.position.x);
                     break;
                 case TouchPhase.Moved:
                 case TouchPhase.Stationary:
-                    //state.touchMoved(MBTTouch.position.x, MBTTouch.deltaPosition.x);
-                    touchMovedSubject.OnNext(MBTTouch.position.x);
+                    _touchMovedSubject.OnNext(MBTTouch.position.x);
                     break;
-
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
-                    //Debug.Log("ended:" + MBTTouch.position.x);
-                    touchEndedSubject.OnNext(MBTTouch.position.x);
-                    //state.touchEnded(MBTTouch.position.x, MBTTouch.deltaPosition.x);
+                    _touchEndedSubject.OnNext(MBTTouch.position.x);
                     break;
             }
         }
