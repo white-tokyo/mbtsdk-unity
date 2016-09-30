@@ -9,39 +9,40 @@ namespace MilboxTouch
 
         public Text DebugText;
         public bool DebugMode = false;
+        public MbtController MbtController;
 
         // Use this for initialization
         void Start()
         {
-            MBTHelper.OnTap += () => {
+            MbtController.OnTap += () => {
                 ShowParameter(string.Format("::Tap::"));
             };
 
-            MBTHelper.OnDoubleTap += () => {
+            MbtController.OnDoubleTap += () => {
                 ShowParameter(string.Format("::DoubleTap::"));
             };
 
-            MBTHelper.OnScroll += (angle) => {
+            MbtController.OnScroll += (angle) => {
                 string s = String.Format("::Scroll {0} ::", angle);
                 ShowParameter(s);
             };
 
-            MBTHelper.OnSwipe += (swipe) => {
+            MbtController.OnSwipe += (swipe) => {
                 var s = String.Format("::Swipespd:{0},dir:{1} ::", swipe.Speed, swipe.Direction);
                 ShowParameter(s);
             };
-            MBTHelper.OnScrollBegan += () => {
+            MbtController.OnScrollBegan += () => {
                 ShowParameter("scrollBegan!!!");
             };
 
-            MBTHelper.OnScrollEnd += () => {
+            MbtController.OnScrollEnd += () => {
                 ShowParameter("ScrollEnd!!!!");
             };
 
-            MBTHelper.OnSetupProgress += () => {
+            MbtController.OnSetupProgress += () => {
                 ShowParameter("setupProgress:" + Time.time);
             };
-            MBTHelper.OnSetupCompleted += () => {
+            MbtController.OnSetupCompleted += () => {
                 ShowParameter("setupComplete!!!");
             };
 

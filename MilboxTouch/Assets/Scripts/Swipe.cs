@@ -7,9 +7,9 @@ namespace MilboxTouch
 {
     public class Swipe
     {
-        private Angle _startAnglePosition;
-        private Angle _endAnglePosition;
-        private float _timeduration;
+        private readonly Angle _startAnglePosition;
+        private readonly Angle _endAnglePosition;
+        private readonly float _timeduration;
 
         public Swipe(Angle startAnglePosition, Angle endAnglePosition, float timeDurationMilsec)
         {
