@@ -1,54 +1,61 @@
-using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 using System;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class ControlScript : MonoBehaviour {
+namespace MilboxTouch
+{
+    public class ControlScript : MonoBehaviour
+    {
 
-	public Text DebugText;
-	public bool DebugMode = false;
+        public Text DebugText;
+        public bool DebugMode = false;
+        public MbtController MbtController;
 
-	// Use this for initialization
-	void Start () {
-		MBTHelper.OnTap += (angle) => {
-			ShowParameter(string.Format("::Tap angle:{0}::",angle));
-		};
+        // Use this for initialization
+        void Start()
+        {
+            MbtController.OnTap += () => {
+                ShowParameter(string.Format("::Tap::"));
+            };
 
-		MBTHelper.OnDoubleTap += (angle) => {
-			ShowParameter(string.Format("::DoubleTap {0}::",angle));
-		};
+            MbtController.OnDoubleTap += () => {
+                ShowParameter(string.Format("::DoubleTap::"));
+            };
 
-		MBTHelper.OnScroll += (angle) => {
-			string s = String.Format("::Scroll {0} ::",angle);
-			ShowParameter(s);
-		};
+            MbtController.OnScroll += (angle) => {
+                string s = String.Format("::Scroll {0} ::", angle);
+                ShowParameter(s);
+            };
 
-		MBTHelper.OnSwipe += (speed,direction) => {
-			var s = String.Format("::Swipespd:{0},dir:{1} ::",speed,direction);
-			ShowParameter(s);
-		};
-		MBTHelper.OnScrollBegan += () => {
-			ShowParameter("scrollBegan!!!");
-		};
+            MbtController.OnSwipe += (swipe) => {
+                var s = String.Format("::Swipespd:{0},dir:{1} ::", swipe.Speed, swipe.Direction);
+                ShowParameter(s);
+            };
+            MbtController.OnScrollBegan += () => {
+                ShowParameter("scrollBegan!!!");
+            };
 
-		MBTHelper.OnScrollEnd += () => {
-			ShowParameter("ScrollEnd!!!!");
-		};
+            MbtController.OnScrollEnd += () => {
+                ShowParameter("ScrollEnd!!!!");
+            };
 
-		MBTHelper.OnSetupProgress += () => {
-			ShowParameter("setupProgress:"+Time.time);
-		};
-		MBTHelper.OnSetupCompleted += () => {
-			ShowParameter("setupComplete!!!");
-		};
+            MbtController.OnSetupProgress += () => {
+                ShowParameter("setupProgress:" + Time.time);
+            };
+            MbtController.OnSetupCompleted += () => {
+                ShowParameter("setupComplete!!!");
+            };
 
-		// DebugText.text = "";
-	}
-		
-	private void ShowParameter (string st) {
-		Debug.Log (st);
-		if (DebugMode) {
-			DebugText.text = st;
-		}
-	}
+            // DebugText.text = "";
+        }
+
+        private void ShowParameter(string st)
+        {
+            if (DebugMode)
+            {
+                Debug.Log(st);
+                DebugText.text = st;
+            }
+        }
+    }
 }
