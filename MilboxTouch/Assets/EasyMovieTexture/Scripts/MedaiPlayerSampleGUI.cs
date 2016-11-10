@@ -24,39 +24,39 @@ public class MedaiPlayerSampleGUI : MonoBehaviour {
 	void OnGUI() {
 		
 	
-		if( GUI.Button(new Rect(50,50,50,100),"Load"))
+		if( GUI.Button(new Rect(50,50,50,50),"Load"))
 		{
 			scrMedia.Load("EasyMovieTexture.mp4");
 			m_bFinish = false;
 		}
 		
-		if( GUI.Button(new Rect(50,200,100,100),"Play"))
+		if( GUI.Button(new Rect(50,100,50,50),"Play"))
 		{
 			scrMedia.Play();
 			m_bFinish = false;
 		}
 	 	
-		if( GUI.Button(new Rect(50,350,100,100),"stop"))
+		if( GUI.Button(new Rect(50,150,50,50),"stop"))
 		{
 			scrMedia.Stop();
 		}
 		
-		if( GUI.Button(new Rect(50,500,100,100),"pause"))
+		if( GUI.Button(new Rect(50,200,50,50),"pause"))
 		{
 			scrMedia.Pause();
 		}
 		
-		if( GUI.Button(new Rect(50,650,100,100),"Unload"))
+		if( GUI.Button(new Rect(50,250,50,50),"Unload"))
 		{
 			scrMedia.UnLoad();
 		}
 		
-		if( GUI.Button(new Rect(50,800,100,100), " " + m_bFinish))
+		if( GUI.Button(new Rect(50,0,50,50), " " + m_bFinish))
 		{
 		
 		}
 		
-		if( GUI.Button(new Rect(200,50,100,100),"SeekTo"))
+		if( GUI.Button(new Rect(200,0,50,50),"SeekTo"))
 		{
 			scrMedia.SeekTo(10000);
 		}
@@ -64,28 +64,28 @@ public class MedaiPlayerSampleGUI : MonoBehaviour {
 
 		if( scrMedia.GetCurrentState() == MediaPlayerCtrl.MEDIAPLAYER_STATE.PLAYING)
 		{
-			if( GUI.Button(new Rect(200,200,100,100),scrMedia.GetSeekPosition().ToString()))
+			if( GUI.Button(new Rect(200,50,50,50),scrMedia.GetSeekPosition().ToString()))
 			{
 				scrMedia.SetSpeed(2.0f);
 			}
 			
-			if( GUI.Button(new Rect(200,350,100,100),scrMedia.GetDuration().ToString()))
+			if( GUI.Button(new Rect(200,100,50,50),scrMedia.GetDuration().ToString()))
 			{
 				scrMedia.SetSpeed(1.0f);
 			}
 
-			if( GUI.Button(new Rect(200,450,100,100),scrMedia.GetVideoWidth().ToString()))
+			if( GUI.Button(new Rect(200,150,50,50),scrMedia.GetVideoWidth().ToString()))
 			{
 				
 			}
 
-			if( GUI.Button(new Rect(200,550,100,100),scrMedia.GetVideoHeight().ToString()))
+			if( GUI.Button(new Rect(200,200,50,50),scrMedia.GetVideoHeight().ToString()))
 			{
 				
 			}
 		}
 
-		if( GUI.Button(new Rect(200,650,100,100),scrMedia.GetCurrentSeekPercent().ToString()))
+		if( GUI.Button(new Rect(200,250,50,50),scrMedia.GetCurrentSeekPercent().ToString()))
 		{
 			
 		}
